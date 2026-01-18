@@ -1,50 +1,43 @@
 steps:
-  # :one: Pull the Docker image from Docker Hub
-  - name: gcr.io/cloud-builders/docker
-    args:
-      - pull
-      - ${_DOCKER_IMAGE}
-
-  # :two: Tag the image for Artifact Registry
-  - name: gcr.io/cloud-builders/docker
-    args:
-      - tag
-      - ${_DOCKER_IMAGE}
-      - us-central1-docker.pkg.dev/$PROJECT_ID/placement-repo/${_SERVICE_NAME}:$COMMIT_SHA
-
-  # :three: Push the image to Artifact Registry
-  - name: gcr.io/cloud-builders/docker
-    args:
-      - push
-      - us-central1-docker.pkg.dev/$PROJECT_ID/placement-repo/${_SERVICE_NAME}:$COMMIT_SHA
-
-  # :four: Deploy the ML & AI 2026 model to Cloud Run
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  # Pull the Docker image from Docker Hub
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['pull', '${_DOCKER_IMAGE}']
+  
+  # Tag the image for Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['tag', '${_DOCKER_IMAGE}', 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$COMMIT_SHA']
+  
+  # Push the image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$COMMIT_SHA']
+  
+  # Deploy ML model to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
-      - run
-      - deploy
-      - ${_SERVICE_NAME}
-      - --image
-      - us-central1-docker.pkg.dev/$PROJECT_ID/placement-repo/${_SERVICE_NAME}:$COMMIT_SHA
-      - --region
-      - ${_REGION}
-      - --platform
-      - managed
-      - --allow-unauthenticated
-      - --port
-      - ${_PORT}
-      - --memory
-      - ${_MEMORY}
-      - --cpu
-      - ${_CPU}
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE_NAME}'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$COMMIT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '${_PORT}'
+      - '--memory'
+      - '${_MEMORY}'
+      - '--cpu'
+      - '${_CPU}'
 
-# Store built images (Artifact Registry)
+# Store images in Google Container Registry
 images:
-  - us-central1-docker.pkg.dev/$PROJECT_ID/placement-repo/${_SERVICE_NAME}:$COMMIT_SHA
+  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$COMMIT_SHA'
 
 # Timeout for the build
-timeout: 1200s
+timeout: '1200s'
 
 # Logging configuration
 options:
@@ -52,9 +45,9 @@ options:
 
 # Substitutions for customizable values
 substitutions:
-  _DOCKER_IMAGE: 03sarath/ml-app:v2
-  _SERVICE_NAME: placement-app
-  _REGION: us-central1
-  _PORT: "8080"
-  _MEMORY: 512Mi
-  _CPU: "1"
+  _DOCKER_IMAGE: '03sarath/ml-app:v2'
+  _SERVICE_NAME: 'placement-app'
+  _REGION: 'us-central1'
+  _PORT: '8080'
+  _MEMORY: '512Mi'
+  _CPU: '1' 
