@@ -18,7 +18,7 @@ steps:
       - push
       - us-central1-docker.pkg.dev/$PROJECT_ID/placement-repo/${_SERVICE_NAME}:$COMMIT_SHA
 
-  # :four: Deploy the ML model to Cloud Run
+  # :four: Deploy the ML & AI 2026 model to Cloud Run
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: gcloud
     args:
